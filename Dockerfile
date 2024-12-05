@@ -8,50 +8,28 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     nano \
     cron \
-    net-tools \
-    iputils-ping \
-    git \
     unzip \
     zip \
     libzip-dev \
     libjpeg-dev \
     libpng-dev \
     libfreetype6-dev \
-    libonig-dev \
     libxml2-dev \
     libcurl4-openssl-dev \
-    libssl-dev \
-    libsqlite3-dev \
-    libicu-dev \
-    g++ \
     zlib1g-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
     pdo_mysql \
-    pdo_sqlite \
     mysqli \
     mbstring \
     zip \
     gd \
-    opcache \
     intl \
     exif \
-    bcmath \
-    calendar \
-    soap \
-    pcntl \
-    sockets \
-    gettext \
-    shmop \
-    sysvsem \
-    sysvshm \
-    sysvmsg \
-    xml \
-    tokenizer \
-    json \
+    opcache \
     curl \
-    && pecl install redis xdebug \
-    && docker-php-ext-enable redis xdebug \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -64,10 +42,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Create cron directory
 RUN mkdir -p /var/spool/cron/crontabs && chmod -R 600 /var/spool/cron/crontabs
 
-# Cron TZ Europe/Berlin
+# Set Cron TZ to Europe/Berlin
 RUN echo "SHELL=/bin/sh\nCRON_TZ=Europe/Berlin" > /etc/crontab
 
-# CMD
+# Set CMD
 CMD ["bash"]
 
 # Config tty
