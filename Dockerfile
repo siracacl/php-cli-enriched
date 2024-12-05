@@ -1,10 +1,10 @@
-# most recent php image
+# Most recent PHP image
 FROM php:latest
 
-# workdir
+# Workdir
 WORKDIR /var/www/html
 
-# install steroids
+# Install basic tools and dependencies
 RUN apt-get update && apt-get install -y \
     nano \
     cron \
@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
     libsqlite3-dev \
-    libmcrypt-dev \
     libicu-dev \
     g++ \
     zlib1g-dev \
