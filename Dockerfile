@@ -1,46 +1,46 @@
-# Verwende das neueste PHP-Basisimage
+# Use the latest PHP base image
 FROM php:latest
 
-# Setze das Arbeitsverzeichnis
+# Set working directory
 WORKDIR /var/www/html
 
-# Update der Paketliste
+# Update package list
 RUN apt-get update
 
-# Installation von Nano
+# Install Nano
 RUN apt-get install -y --no-install-recommends nano
 
-# Installation von Cron
+# Install Cron
 RUN apt-get install -y --no-install-recommends cron
 
-# Installation von Unzip
+# Install Unzip
 RUN apt-get install -y --no-install-recommends unzip
 
-# Installation von Zip
+# Install Zip
 RUN apt-get install -y --no-install-recommends zip
 
-# Installation von libzip-dev
+# Install libzip-dev
 RUN apt-get install -y --no-install-recommends libzip-dev
 
-# Installation von libjpeg-dev
+# Install libjpeg-dev
 RUN apt-get install -y --no-install-recommends libjpeg-dev
 
-# Installation von libpng-dev
+# Install libpng-dev
 RUN apt-get install -y --no-install-recommends libpng-dev
 
-# Installation von libxml2-dev
+# Install libxml2-dev
 RUN apt-get install -y --no-install-recommends libxml2-dev
 
-# Installation von libcurl4-openssl-dev
+# Install libcurl4-openssl-dev
 RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev
 
-# Installation von zlib1g-dev
+# Install zlib1g-dev
 RUN apt-get install -y --no-install-recommends zlib1g-dev
 
-# Installation der Abhängigkeiten für mbstring
+# Install mbstring dependencies
 RUN apt-get install -y --no-install-recommends libonig-dev
 
-# Installation der PHP-Erweiterungen
+# Install PHP extensions
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install mbstring
@@ -51,24 +51,24 @@ RUN docker-php-ext-install exif
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-install curl
 
-# Aufräumen nach der Installation
+# Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Setze die Zeitzone
+# Set timezone
 RUN echo "date.timezone = Europe/Berlin" > /usr/local/etc/php/conf.d/timezone.ini
 
-# Installiere Composer
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Cron-Ordner anlegen und Rechte setzen
+# Create Cron folder and set permissions
 RUN mkdir -p /var/spool/cron/crontabs && chmod -R 600 /var/spool/cron/crontabs
 
-# Setze Cron TZ auf Europe/Berlin
+# Set Cron TZ to Europe/Berlin
 RUN echo "SHELL=/bin/sh\nCRON_TZ=Europe/Berlin" > /etc/crontab
 
-# CMD standardmäßig auf bash setzen
-CMD ["bash"]
+# Default to Cron in foreground
+CMD ["cron", "-f"]
 
-# Umgebungsvariablen für TTY
+# Set TTY environment variables
 ENV TTY=true
 ENV STDIN_OPEN=true
