@@ -37,6 +37,9 @@ RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev
 # Installation von zlib1g-dev
 RUN apt-get install -y --no-install-recommends zlib1g-dev
 
+# Installation der Abhängigkeiten für mbstring
+RUN apt-get install -y --no-install-recommends libonig-dev
+
 # Installation der PHP-Erweiterungen
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
