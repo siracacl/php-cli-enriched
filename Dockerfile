@@ -1,11 +1,11 @@
-# Most recent PHP image
+# Verwende das neueste PHP-Basisimage
 FROM php:latest
 
-# Workdir
+# Setze das Arbeitsverzeichnis
 WORKDIR /var/www/html
 
-# Install basic tools and dependencies
-RUN apt-get update && apt-get install -y \
+# Installiere grundlegende Tools und PHP-Erweiterungen
+RUN apt-get update && apt-get install -y --no-install-recommends \
     nano \
     cron \
     unzip \
@@ -26,23 +26,23 @@ RUN apt-get update && apt-get install -y \
     exif \
     opcache \
     curl \
-    && apt-get clean
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set Europe/Berlin TZ
+# Setze die Zeitzone
 RUN echo "date.timezone = Europe/Berlin" > /usr/local/etc/php/conf.d/timezone.ini
 
-# Install Composer
+# Installiere Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Create cron directory
+# Cron-Ordner anlegen und Rechte setzen
 RUN mkdir -p /var/spool/cron/crontabs && chmod -R 600 /var/spool/cron/crontabs
 
-# Set Cron TZ to Europe/Berlin
+# Setze Cron TZ auf Europe/Berlin
 RUN echo "SHELL=/bin/sh\nCRON_TZ=Europe/Berlin" > /etc/crontab
 
-# Set CMD
+# CMD standardmäßig auf bash setzen
 CMD ["bash"]
 
-# Config tty
+# Umgebungsvariablen für TTY (optional, je nach Umgebung)
 ENV TTY=true
 ENV STDIN_OPEN=true
