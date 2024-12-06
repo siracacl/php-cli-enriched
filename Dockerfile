@@ -69,6 +69,15 @@ RUN echo "SHELL=/bin/sh\nCRON_TZ=Europe/Berlin" > /etc/crontab
 # Add custom PHP configuration
 RUN echo "memory_limit = 256M" > /etc/php/8.4/cli/conf.d/99-custom.ini
 
+# Copy the crontab file into the container
+COPY crontab /etc/cron.d/custom-cron
+
+# Set permissions for the crontab file
+RUN chmod 0644 /etc/cron.d/custom-cron
+
+# Apply the crontab
+RUN crontab /etc/cron.d/custom-cron
+
 # Set the default command to run Cron in the foreground
 CMD ["cron", "-f"]
 
