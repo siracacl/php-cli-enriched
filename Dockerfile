@@ -4,26 +4,14 @@ FROM debian:bookworm-slim
 # Setze das Arbeitsverzeichnis
 WORKDIR /var/www/html
 
-# Aktualisiere Paketlisten, installiere grundlegende Abhängigkeiten und richte PHP-Quellen ein
+# Aktualisiere Paketlisten und installiere grundlegende Abhängigkeiten
 RUN apt-get update && apt-get install -y \
-    lsb-release \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg && \
-    curl -sSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/php.gpg && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
-    apt-get update
-
-# Installiere PHP und benötigte Erweiterungen
-RUN apt-get install -y \
     php-cli \
     php-mysql \
     php-mbstring \
     php-zip \
     php-gd \
     php-intl \
-    php-exif \
     php-opcache \
     php-curl \
     php-xml \
