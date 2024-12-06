@@ -13,6 +13,14 @@ RUN apt-get install -y --no-install-recommends nano
 # Install Cron
 RUN apt-get install -y --no-install-recommends cron
 
+# Install systemctl
+
+RUN apt-get install -y --no-install-recommends systemctl
+
+# Install sudo
+
+RUN apt-get install -y --no-install-recommends sudo
+
 # Install Unzip
 RUN apt-get install -y --no-install-recommends unzip
 
