@@ -7,7 +7,6 @@ WORKDIR /var/www/html
 # Update package lists and install core dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \  # Allows adding PPAs
-    lsb-release \                 # Utility for fetching OS details
     curl \                        # Required for downloading additional tools
     apt-transport-https \         # Enables HTTPS support for apt
     sudo \                        # Allows using sudo commands
