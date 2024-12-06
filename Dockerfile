@@ -1,5 +1,5 @@
 # Verwende ein leichtes Linux-Image mit apt (Debian Slim als Basis)
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /var/www/html
