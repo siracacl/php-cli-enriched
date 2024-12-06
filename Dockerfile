@@ -4,62 +4,74 @@ FROM ubuntu:24.04
 # Set the working directory
 WORKDIR /var/www/html
 
-# Update package lists and install core dependencies
+# Update the package list and install required dependencies
 RUN apt-get update && apt-get install -y \
-    software-properties-common \  # Allows adding PPAs
-    curl \                        # Required for downloading additional tools
-    apt-transport-https \         # Enables HTTPS support for apt
-    sudo \                        # Allows using sudo commands
-    unzip \                       # Required for handling .zip files
-    zip \                         # Compression tool
-    nano \                        # Lightweight text editor
-    cron \                        # Cron job support
-    libzip-dev \                  # Required for ZIP operations
-    libjpeg-dev \                 # JPEG image library
-    libpng-dev \                  # PNG image library
-    libxml2-dev \                 # XML processing library
-    libcurl4-openssl-dev \        # cURL library
-    zlib1g-dev \                  # Compression library
-    systemctl && \                # Systemd service manager
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    software-properties-common \
+    lsb-release \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg
 
-# Add the PPA for PHP 8.4 and install PHP with required extensions
-RUN add-apt-repository ppa:ondrej/php && apt-get update && apt-get install -y \
-    php8.4-cli \                 # PHP Command Line Interface
-    php8.4-mysql \               # MySQL support for PHP
-    php8.4-mbstring \            # Multibyte string support
-    php8.4-zip \                 # ZIP file handling
-    php8.4-gd \                  # Image processing
-    php8.4-intl \                # Internationalization support
-    php8.4-opcache \             # Opcode cache for performance
-    php8.4-curl \                # cURL support for API calls
-    php8.4-xml \                 # XML handling
-    php8.4-bcmath \              # Arbitrary precision math
-    php8.4-soap \                # SOAP extension
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Add the Ondřej PHP PPA
+RUN add-apt-repository ppa:ondrej/php -y
 
-# Install Composer for dependency management
+# Update the package list again
+RUN apt-get update
+
+# Install PHP and required extensions
+RUN apt-get install -y \
+    php8.4 \
+    php8.4-cli \
+    php8.4-mysql \
+    php8.4-mbstring \
+    php8.4-zip \
+    php8.4-gd \
+    php8.4-intl \
+    php8.4-exif \
+    php8.4-opcache \
+    php8.4-curl \
+    php8.4-xml \
+    php8.4-bcmath \
+    php8.4-soap
+
+# Install additional tools
+RUN apt-get install -y \
+    cron \
+    nano \
+    unzip \
+    zip \
+    libzip-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
+    libonig-dev \
+    sudo
+
+# Clean up unnecessary files to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Configure PHP timezone
+# Set the timezone
 RUN echo "date.timezone = Europe/Berlin" > /etc/php/8.4/cli/conf.d/99-timezone.ini
 
-# Create cron directories and set permissions
-RUN mkdir -p /var/spool/cron/crontabs && chmod -R 600 /var/spool/cron/crontabs
+# Create Cron directories and set permissions
+RUN mkdir -p /var/spool/cron/crontabs
+RUN chmod -R 600 /var/spool/cron/crontabs
 
-# Add default crontab configuration
+# Add default Crontab configuration
 RUN echo "SHELL=/bin/sh\nCRON_TZ=Europe/Berlin" > /etc/crontab
 
 # Add custom PHP configuration
 RUN echo "memory_limit = 256M" > /etc/php/8.4/cli/conf.d/99-custom.ini
 
-# Enable systemd and cron service
-RUN apt-get install -y systemd && \
-    systemctl enable cron
+# Set the default command to run Cron in the foreground
+CMD ["cron", "-f"]
 
-# Default command: Bash
-CMD ["/bin/bash"]
-
-# TTY and STDIN environment variables for container interaction
+# Set TTY and STDIN environment variables
 ENV TTY=true
 ENV STDIN_OPEN=true
