@@ -40,6 +40,9 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev
 # Install mbstring dependencies
 RUN apt-get install -y --no-install-recommends libonig-dev
 
+# Install imagick
+RUN apt-get install -y imagemagick libmagickwand-dev && pecl install imagick && docker-php-ext-enable imagick
+
 # Install PostgreSQL dependencies
 RUN apt-get install -y --no-install-recommends libpq-dev
 
