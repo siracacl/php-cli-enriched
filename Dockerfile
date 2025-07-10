@@ -10,6 +10,9 @@ RUN apt-get update
 # Install Nano
 RUN apt-get install -y --no-install-recommends nano
 
+# Install git
+RUN apt-get install -y --no-install-recommends git
+
 # Install Unzip
 RUN apt-get install -y --no-install-recommends unzip
 

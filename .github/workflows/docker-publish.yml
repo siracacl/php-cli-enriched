@@ -27,4 +27,4 @@ jobs:
         push: true
         tags: |
           ghcr.io/${{ github.repository_owner }}/php-cli-enriched:latest
-          ghcr.io/${{ github.repository_owner }}/php-cli-enriched:1.0.0
+          ghcr.io/${{ github.repository_owner }}/php-cli-enriched:1.0.1
