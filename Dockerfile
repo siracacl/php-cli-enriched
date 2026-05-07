@@ -1,75 +1,80 @@
-# Use the latest PHP base image
 FROM php:latest
 
-# Set working directory
+# Avoid interactive prompts during apt installs
+ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /var/www/html
 
-# Update package list
-RUN apt-get update
+# ---------------------------------------------------------------------
+# System packages (PHP build deps + tooling + Python)
+# ---------------------------------------------------------------------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        # Editing & version control
+        nano \
+        git \
+        # Archive tools
+        unzip \
+        zip \
+        # Networking diagnostics
+        net-tools \
+        # PHP extension build dependencies
+        libzip-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libxml2-dev \
+        libcurl4-openssl-dev \
+        zlib1g-dev \
+        libonig-dev \
+        libpq-dev \
+        # Imagick
+        imagemagick \
+        libmagickwand-dev \
+        # Python toolchain (for scripts using python3)
+        python3-full \
+        python3-dev \
+        python3-pip \
+        python3-venv \
+        # General build tooling
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Nano
-RUN apt-get install -y --no-install-recommends nano
+# ---------------------------------------------------------------------
+# PHP extensions (built-in)
+# ---------------------------------------------------------------------
+RUN docker-php-ext-install \
+        pdo_mysql \
+        mysqli \
+        mbstring \
+        zip \
+        gd \
+        intl \
+        exif \
+        opcache \
+        curl \
+        pdo_pgsql \
+        pgsql
 
-# Install git
-RUN apt-get install -y --no-install-recommends git
+# ---------------------------------------------------------------------
+# PHP extensions (PECL)
+# ---------------------------------------------------------------------
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
-# Install Unzip
-RUN apt-get install -y --no-install-recommends unzip
-
-# Install Zip
-RUN apt-get install -y --no-install-recommends zip
-
-# Install libzip-dev
-RUN apt-get install -y --no-install-recommends libzip-dev
-
-# Install libjpeg-dev
-RUN apt-get install -y --no-install-recommends libjpeg-dev
-
-# Install libpng-dev
-RUN apt-get install -y --no-install-recommends libpng-dev
-
-# Install libxml2-dev
-RUN apt-get install -y --no-install-recommends libxml2-dev
-
-# Install libcurl4-openssl-dev
-RUN apt-get install -y --no-install-recommends libcurl4-openssl-dev
-
-# Install zlib1g-dev
-RUN apt-get install -y --no-install-recommends zlib1g-dev
-
-# Install mbstring dependencies
-RUN apt-get install -y --no-install-recommends libonig-dev
-
-# Install imagick
-RUN apt-get install -y imagemagick libmagickwand-dev && pecl install imagick && docker-php-ext-enable imagick
-
-# Install PostgreSQL dependencies
-RUN apt-get install -y --no-install-recommends libpq-dev
-
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql
-RUN docker-php-ext-install mysqli
-RUN docker-php-ext-install mbstring
-RUN docker-php-ext-install zip
-RUN docker-php-ext-install gd
-RUN docker-php-ext-install intl
-RUN docker-php-ext-install exif
-RUN docker-php-ext-install opcache
-RUN docker-php-ext-install curl
-RUN docker-php-ext-install pdo_pgsql pgsql
-
-# Clean up
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Set timezone
+# ---------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------
 RUN echo "date.timezone = Europe/Berlin" > /usr/local/etc/php/conf.d/timezone.ini
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# ---------------------------------------------------------------------
+# Composer
+# ---------------------------------------------------------------------
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Default to Cron in foreground
-CMD ["php", "-a"]
-
-# Set TTY environment variables
+# ---------------------------------------------------------------------
+# Runtime
+# ---------------------------------------------------------------------
 ENV TTY=true
 ENV STDIN_OPEN=true
+
+CMD ["php", "-a"]
