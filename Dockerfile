@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # ---------------------------------------------------------------------
 # Python venv for weekly-report forecasting (numpy + statsmodels)
-# Path is hardcoded in weekly-report/forecaster.php and forecast.py
 # ---------------------------------------------------------------------
 RUN python3 -m venv /opt/forecast-env \
     && /opt/forecast-env/bin/pip install --no-cache-dir --upgrade pip \
